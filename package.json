@@ -11,10 +11,10 @@
         "url": "http://github.com/antouank/consologger.js.git"
     },
     "engines": {
-        "node": ">=0.1.90"
+        "node": ">= 0.1.9"
     },
-    "devDependencies": {
-        "colors": "*"
+    "dependencies": {
+        "colors": "0.x.x"
     },
     "main": "consologger"
 }
