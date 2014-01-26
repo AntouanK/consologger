@@ -1,7 +1,7 @@
 {
     "name": "consologger",
     "description": "get a simple logger, with colored output, prefix options, and a simple on/off switch",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "author": "Antonis Karamitros",
     "homepage": "https://github.com/antouank/consologger.js",
     "bugs": "https://github.com/antouank/consologger.js/issues",
