@@ -1,0 +1,20 @@
+{
+    "name": "consologger",
+    "description": "get a simple logger, with colored output, prefix options, and a simple on/off switch",
+    "version": "0.1.0",
+    "author": "Antonis Karamitros",
+    "homepage": "https://github.com/antouank/consologger.js",
+    "bugs": "https://github.com/antouank/consologger.js/issues",
+    "keywords": [ "console", "log", "logger", "colors" ],
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/antouank/consologger.js.git"
+    },
+    "engines": {
+        "node": ">=0.1.90"
+    },
+    "devDependencies": {
+        "colors": "*"
+    },
+    "main": "consologger"
+}
