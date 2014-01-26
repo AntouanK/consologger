@@ -60,25 +60,33 @@ module.exports = (function(){
 	};
 
 	logger.warning = function(text){
-		if(on){
+		if(typeof text !== 'string'){
+			console.log(text);
+		} else if(on){
 			console.log(prefix() + text.warn);
 		}
 	};
 
 	logger.info = function(text){
-		if(on){
+		if(typeof text !== 'string'){
+			console.log(text);
+		} else if(on){
 			console.log(prefix() + text.info);
 		}
 	};
 
 	logger.error = function(text){
-		if(on){
+		if(typeof text !== 'string'){
+			console.log(text);
+		} else if(on){
 			console.log(prefix() + text.error);
 		}
 	};
 	
 	logger.data = function(text){
-		if(on){
+		if(typeof text !== 'string'){
+			console.log(text);
+		} else if(on){
 			console.log(prefix() + text.data);
 		}
 	};
