@@ -48,4 +48,4 @@ setTimeout(function(){
 },1100);
 ```
 
-<img src="http://i.imgur.com/KDB2RXA.png" border = "0"/>
+<img src="http://i.imgur.com/WhECopv.png" border = "0"/>
