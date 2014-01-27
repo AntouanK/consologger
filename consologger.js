@@ -1,5 +1,5 @@
 /*
-	logger module
+	consologger module
 	
 	Antonis Karamitros - 24/1/2014
  */
@@ -8,27 +8,52 @@ module.exports = (function(){
 
 	'use strict';
 
+	//	module requires console
 	if(console === undefined){
 		return undefined;
 	}
 
 	var logger = {},
 		colors = require('colors'),
-		on = true;
+		on = true,
+		palette = {
+			silly: 'rainbow',
+			verbose: 'cyan',
+			info: 'green',
+			data: 'grey',
+			warn: 'yellow',
+			error: 'red'
+		};
 
 	//	add new colors to use here
-	colors.setTheme({
-		silly: 'rainbow',
-		verbose: 'cyan',
-		info: 'green',
-		data: 'grey',
-		warn: 'yellow',
-		error: 'red'
-	});
+	colors.setTheme(palette);
 
 	//	prefix fun, to return a dynamic prefix string
 	var prefix = function(){
 		return '';
+	};
+
+	//	make string check default for all functions
+	var checkIfString = function(callback){
+
+		return function(value){
+			if(on){
+				if(typeof value !== 'string'){
+					console.log(value);
+				} else {
+					callback(value)
+				}
+			}
+		};
+	};
+
+	//	set a new color to a type of logging
+	//	** carefull if color is not acceptable string...
+	logger.setColor = function(type, color){
+
+		if(palette[type] !== undefined && typeof color === 'string'){
+			palette[type] = color;
+		}
 	};
 
 	//	set the mode you want to use ( default is 1, open )
@@ -53,43 +78,60 @@ module.exports = (function(){
 		}
 	};
 
-	logger.text = function(text){
+	//	simple white text
+	logger.text = checkIfString(function(text){
 		if(on){
 			console.log(prefix() + text);
 		}
-	};
+	});
 
-	logger.warning = function(text){
-		if(typeof text !== 'string'){
-			console.log(text);
-		} else if(on){
+	//	warning
+	logger.warning = checkIfString(function(text){
+		
+		if(on){
 			console.log(prefix() + text.warn);
 		}
-	};
+	});
 
-	logger.info = function(text){
-		if(typeof text !== 'string'){
-			console.log(text);
-		} else if(on){
+	//	info
+	logger.info = checkIfString(function(text){
+		
+		if(on){
 			console.log(prefix() + text.info);
 		}
-	};
+	});
 
-	logger.error = function(text){
-		if(typeof text !== 'string'){
-			console.log(text);
-		} else if(on){
+	//	error
+	logger.error = checkIfString(function(text){
+		
+		if(on){
 			console.log(prefix() + text.error);
 		}
-	};
+	});
 	
-	logger.data = function(text){
-		if(typeof text !== 'string'){
-			console.log(text);
-		} else if(on){
+	//	data
+	logger.data = checkIfString(function(text){
+		
+		if(on){
 			console.log(prefix() + text.data);
 		}
-	};
+	});
+
+	//	verbose
+	logger.verbose = checkIfString(function(text){
+		
+		if(on){
+			console.log(prefix() + text.verbose);
+		}
+	});
+
+	//	silly
+	logger.silly = checkIfString(function(text){
+		
+		if(on){
+			console.log(prefix() + text.silly);
+		}
+	});
 
 	return logger;
 }());

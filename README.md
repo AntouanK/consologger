@@ -5,42 +5,47 @@ A simple logger so you can manage all your 'console.log()' from a main lib. Colo
 
 ## Use example
 ```js
-var logger = require('consologger');
+var log = require('./consologger');
 
-//  print normal text
-logger.text('hello');
-//  print a warning
-logger.warning('careful...');
-//  print info
-logger.info('something happened');
-//  print data
-logger.data('1 + 2 = '+4);
-//  print an error
-logger.error("that's wrong!");
+log.text('hello from consologger');
+log.warning('careful...');
+log.info('something happened');
+log.info('nothing serious happened');
+log.verbose('doing some calculations...')
+log.data('1 + 2 = '+3);
+log.data('3 + 2 = '+4);
+log.error("that's wrong!");
 
-//  set a prefix for the log
-logger.setPrefix(function() {
-	return 'my_prefix-';
+//	set a dynamic prefix for every line
+log.setPrefix(function() {
+	return '['+Date().substr(0,24)+'] ';
 });
 
-//  print prefixed lines
-logger.text('hello again');
-logger.info('time to go');
+//	switch off the logger
+log.setMode(0);
+log.error(undefined);
+log.data(null);
+log.text('YOU ARE NOT SUPPOSED TO SEE THIS');
+//	switch on again
+log.setMode(1);
 
-//  turn logger off
-logger.setMode(0);
+log.text('hello again');
 
-logger.text('YOU ARE NOT SUPPOSED TO SEE THIS');
+setTimeout(function(){
+	log.info('you can see live date time in the prefix');
+	//	set another color to a type of logging
+	log.setColor('info', 'magenta');
+	log.info('info is now magenta');
 
-//  turn logger on
-logger.setMode(1);
+	log.setPrefix(function() {
+		return '';
+	});
 
-//  clear prefix
-logger.setPrefix(function() {
-	return '';
-});
-
-logger.text('ok now, back again');
+	log.text('back to normal again');
+	log.silly('~~~~~~~~~~~~~');
+	log.silly('enjoy logging');
+	log.silly('~~~~~~~~~~~~~');
+},1100);
 ```
 
 <img src="http://i.imgur.com/KDB2RXA.png" border = "0"/>

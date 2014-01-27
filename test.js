@@ -1,26 +1,41 @@
-var logger = require('./consologger');
+var log = require('./consologger');
 
-logger.text('hello');
-logger.warning('careful...');
-logger.info('something happened');
-logger.data('1 + 2 = '+4);
-logger.error("that's wrong!");
+log.text('hello from consologger');
+log.warning('careful...');
+log.info('something happened');
+log.info('nothing serious happened');
+log.verbose('doing some calculations...')
+log.data('1 + 2 = '+3);
+log.data('3 + 2 = '+4);
+log.error("that's wrong!");
 
-logger.setPrefix(function() {
-	return 'my_prefix-';
+//	set a dynamic prefix for every line
+log.setPrefix(function() {
+	return '['+Date().substr(0,24)+'] ';
 });
 
-logger.text('hello again');
-logger.info('time to go');
+//	switch off the logger
+log.setMode(0);
+log.error(undefined);
+log.data(null);
+log.text('YOU ARE NOT SUPPOSED TO SEE THIS');
+//	switch on again
+log.setMode(1);
 
-logger.setMode(0);
+log.text('hello again');
 
-logger.text('YOU ARE NOT SUPPOSED TO SEE THIS');
+setTimeout(function(){
+	log.info('you can see live date time in the prefix');
+	//	set another color to a type of logging
+	log.setColor('info', 'magenta');
+	log.info('info is now magenta');
 
-logger.setMode(1);
+	log.setPrefix(function() {
+		return '';
+	});
 
-logger.setPrefix(function() {
-	return '';
-});
-
-logger.text('ok now, back again');
+	log.text('back to normal again');
+	log.silly('~~~~~~~~~~~~~');
+	log.silly('enjoy logging');
+	log.silly('~~~~~~~~~~~~~');
+},1100);
