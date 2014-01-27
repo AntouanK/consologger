@@ -21,8 +21,9 @@ module.exports = (function(){
 			verbose: 'cyan',
 			info: 'green',
 			data: 'grey',
-			warn: 'yellow',
-			error: 'red'
+			warning: 'yellow',
+			error: 'red',
+			text: 'white'
 		};
 
 	//	add new colors to use here
@@ -41,10 +42,30 @@ module.exports = (function(){
 				if(typeof value !== 'string'){
 					console.log(value);
 				} else {
-					callback(value)
+					callback(value);
 				}
 			}
 		};
+	};
+
+	var print = function(value, type){
+
+		[
+			'underline',
+			'bold',
+			'inverse',
+			'strikethrough'
+		]
+		.forEach(function(mode){
+			if(print[mode] === true){
+				value = value[mode];
+				print[mode] = false;
+			}
+		});
+
+		if(on){
+			console.log(prefix() + value[type]);
+		}
 	};
 
 	//	set a new color to a type of logging
@@ -54,6 +75,8 @@ module.exports = (function(){
 		if(palette[type] !== undefined && typeof color === 'string'){
 			palette[type] = color;
 		}
+
+		return logger;
 	};
 
 	//	set the mode you want to use ( default is 1, open )
@@ -67,6 +90,8 @@ module.exports = (function(){
 			on = true;
 		}
 		//	add whatever mode you want here
+
+		return logger;
 	};
 
 	//	example
@@ -76,61 +101,40 @@ module.exports = (function(){
 		if(typeof newPrefix === 'function'){
 			prefix = newPrefix;
 		}
+
+		return logger;
 	};
 
-	//	simple white text
-	logger.text = checkIfString(function(text){
-		if(on){
-			console.log(prefix() + text);
-		}
-	});
+	//	set up modes functions
+	[
+		'text',
+		'warning',
+		'info',
+		'error',
+		'data',
+		'verbose',
+		'silly'
+	]
+	.forEach(function(mode){
 
-	//	warning
-	logger.warning = checkIfString(function(text){
-		
-		if(on){
-			console.log(prefix() + text.warn);
-		}
-	});
+		logger[mode] = function(text){
+			print(text, mode);
+		};
 
-	//	info
-	logger.info = checkIfString(function(text){
-		
-		if(on){
-			console.log(prefix() + text.info);
-		}
-	});
+		[
+			'underline',
+			'bold',
+			'inverse',
+			'strikethrough'
+		]
+		.forEach(function(style){
+			logger[style] = logger[style] || {};
+			logger[style][mode] = function(text){
+				print[style] = true;
 
-	//	error
-	logger.error = checkIfString(function(text){
-		
-		if(on){
-			console.log(prefix() + text.error);
-		}
-	});
-	
-	//	data
-	logger.data = checkIfString(function(text){
-		
-		if(on){
-			console.log(prefix() + text.data);
-		}
-	});
-
-	//	verbose
-	logger.verbose = checkIfString(function(text){
-		
-		if(on){
-			console.log(prefix() + text.verbose);
-		}
-	});
-
-	//	silly
-	logger.silly = checkIfString(function(text){
-		
-		if(on){
-			console.log(prefix() + text.silly);
-		}
+				print(text, mode);
+			};
+		});
 	});
 
 	return logger;
