@@ -47,9 +47,10 @@ module.exports = (function(){
 
 	//	module variables
 	//	
-	var logger = {},
-		loggerAdditional = {},
-		on     = true,
+	var logger            = {},
+		loggerAdditional  = {},
+		on                = true,
+		stylePrefix       = false,
 		styles = {
 			//====================== styles
 			'bold'          : ['\x1B[1m',  '\x1B[22m'],
@@ -109,9 +110,13 @@ module.exports = (function(){
 	//	** carefull if color is not acceptable string...
 	logger.setColor = function(name, color){
 
-		if(palette[name] !== undefined && typeof color === 'string'){
-			palette[name] = color;
+		if(typeof color !== 'string'){
+			return logger;
 		}
+
+		palette[name] = color;
+
+		makeFunction(name);
 
 		return logger;
 	};
@@ -125,6 +130,10 @@ module.exports = (function(){
 			on = false;
 		} else if (mode === 1){
 			on = true;
+		} else if(mode === 'stylePrefix'){
+			stylePrefix = true;
+		} else if(mode === 'noStylePrefix'){
+			stylePrefix = false;
 		}
 		//	add whatever modes you want here...
 
@@ -142,7 +151,8 @@ module.exports = (function(){
 			stylePrepend = '',
 			styleAppend = '';
 
-		if(prefixResult !== ''){
+		//	if prefix is in style, and not '', push it in the args
+		if(prefixResult !== '' && stylePrefix === true){
 			argsToPrint.push(prefixResult);
 			argsToPrint = argsToPrint.concat(argsArray);
 		} else {
@@ -181,16 +191,15 @@ module.exports = (function(){
 		} else {
 			argsToPrint = [stylePrepend + styles[style][0]].concat(argsToPrint);
 		}
+
+		if(prefixResult !== '' && stylePrefix === false){
+			argsToPrint = [prefixResult].concat(argsToPrint);
+		}
 		
 		console.log.apply(this, argsToPrint);
 	};
 
-
-	//	set up function modes
-	Object
-	.keys(palette)
-	.concat(styles)
-	.forEach(function(type){
+	var makeFunction = function(type){
 
 		//	for each type we add function to logger
 		logger[type] = function(){
@@ -222,7 +231,11 @@ module.exports = (function(){
 				logger[type].apply(this, map(arguments));
 			};
 		});
-	});
+	};
+
+	//	set up function modes
+	Object.keys(palette)
+	.forEach(makeFunction);
 
 	return logger;
 }());
