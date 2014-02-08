@@ -33,6 +33,10 @@ enable a mode
 - 'noStylePrefix' to leave prefix out of styling
 - 'stylePrefix' to include prefix in styling
 
+#### .setPrefix(fn)
+pass a function that returns a string which will be used as prefix for whatever consologger prints
+( you can include/exclude it from being styled )
+
 ## Use example
 ```js
 //	test.js for consologger
