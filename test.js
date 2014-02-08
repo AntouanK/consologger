@@ -1,45 +1,67 @@
-var log = require('./consologger');
+//	test.js for consologger
 
-log.text('hello from consologger');
-log.warning('careful...');
-log.info('something happened');
-log.info('nothing serious happened');
-log.verbose('doing some calculations...')
-log.data('1 + 2 = '+3);
-log.strikethrough.data('3 + 2 = '+4);
-log.error("that's wrong!");
-log.bold.error("very wrong!");
+var log = require('./consologger'),
+	i   = 0;
 
+//	chaining supported ( will try to implement same line appending later... )
+log
+.text('hello', { 'from': 'consologger', 'version': '0.1.4'})
+.warning('warning: this is a work in progress...')
+.info('we can print everything now. objects, functions, whatever');
+
+log.info({and: {colors: 'package', is: ['not needed now']}});
+
+//	set our favorite colours if we don't like the defaults
+log
+.setColor('debug', 'blue')
+.setColor('info', 'magenta')
+.setColor('invertError', 'redBG')
+//	let's print some stuff
+.info('info: nothing serious happened', 'just a color change')
+.debug('log.debug()', 'is now blue!')
+.verbose('calculating...')
+.data('1 + 2 = '+3)
+.strikethrough.data('3 + 2 = '+4)
+.error('that\'s wrong!')
+.bold.error('very wrong!')
+.invertError(['crazy', 'inverted', 'error']);
+
+log
 //	switch off the logger
-log.setMode(0);
-log.error(undefined);
-log.data(null);
-log.text('YOU ARE NOT SUPPOSED TO SEE THIS');
+.setMode('off')
+.data('logger is now off so you can switch it off in a big project and avoid useless printing')
+.text('YOU ARE NOT SUPPOSED TO SEE THIS')
+.error(undefined)
 //	switch on again
-log.setMode(1);
-
+.setMode('on')
+.bold.info({"let 's add": {a: 'prefix now'}})
 //	set a dynamic prefix for every line
-log.setPrefix(function() {
-	return '['+Date().substr(0,24)+'] ';
+.setPrefix(function() {
+	return '['+Date().substr(0,24)+']['+(i+=1)+']';
 });
 
-log.text('hello again');
+//	print functions
+log.text(function hello(again){ return 'back';});
 
-setTimeout(function(){
-	log.underline.text('click here');
-	log.data('just kidding ( showing off underline )');
-	log.info('see live date time in the prefix');
-	//	set another color to a type of logging
-	log
-	.setColor('info', 'magenta')
-	.info('info is now magenta');
+//	remove prefix styling
+log.setMode('noStylePrefix');
 
-	log.setPrefix(function() {
-		return '';
-	});
+log.underline.text('click here');
 
-	log.text('back to normal again');
-	log.silly('~~~~~~~~~~~~~~~');
-	log.silly(' enjoy logging');
-	log.silly('~~~~~~~~~~~~~~~');
-},1000);
+//	revert to have prefix styled
+log.setMode('stylePrefix');
+
+log
+.data('just kidding ( showing off underline )')
+.info({ we: 'have', live: ['time','prefix']});
+
+//	set prefix off
+log.setPrefix(function() {
+	return '';
+});
+
+log.text('keep logging...');
+log.underline.text('npmjs.org/package/consologger');
+
+//	TODO: add indentation levels
+//	TODO: add same line identing
