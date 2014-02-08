@@ -13,8 +13,5 @@
     "engines": {
         "node": ">= 0.1.9"
     },
-    "dependencies": {
-        "colors": "0.x.x"
-    },
     "main": "consologger"
 }
