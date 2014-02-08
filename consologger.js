@@ -126,9 +126,9 @@ module.exports = (function(){
 	//	1 to open it
 	logger.setMode = function(mode){
 
-		if(mode === 0){
+		if(mode === 0 || mode === 'off'){
 			on = false;
-		} else if (mode === 1){
+		} else if (mode === 1 || mode === 'on'){
 			on = true;
 		} else if(mode === 'stylePrefix'){
 			stylePrefix = true;
@@ -197,6 +197,7 @@ module.exports = (function(){
 		}
 		
 		console.log.apply(this, argsToPrint);
+		return logger;
 	};
 
 	var makeFunction = function(type){
@@ -229,6 +230,7 @@ module.exports = (function(){
 				// each time, they just turn a flag on, and call the classic print
 				print[extraStyle] = true;
 				logger[type].apply(this, map(arguments));
+				return logger;
 			};
 		});
 	};
