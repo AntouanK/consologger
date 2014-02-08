@@ -32,6 +32,17 @@ module.exports = (function(){
 
 		return argsArray;
 	};
+
+	function addStyle(value, style){
+
+		if(typeof value === 'string'){
+			return styles[style][0] + value + styles[style][1];
+		} else if(value === undefined || typeof value.length !== 'number' ){
+			return value;
+		} else {
+			return [styles[style][0]].concat(value).concat([styles[style][1]]);
+		}
+	}
 	//-------------------------------------------
 
 	//	module variables
@@ -40,30 +51,28 @@ module.exports = (function(){
 		loggerAdditional = {},
 		on     = true,
 		styles = {
-			//styles
+			//====================== styles
 			'bold'          : ['\x1B[1m',  '\x1B[22m'],
 			'italic'        : ['\x1B[3m',  '\x1B[23m'],
 			'underline'     : ['\x1B[4m',  '\x1B[24m'],
 			'inverse'       : ['\x1B[7m',  '\x1B[27m'],
 			'strikethrough' : ['\x1B[9m',  '\x1B[29m'],
-			//text colors
+			//====================== text colors
 			//grayscale
 			'white'         : ['\x1B[37m', '\x1B[39m'],
 			'grey'          : ['\x1B[90m', '\x1B[39m'],
 			'black'         : ['\x1B[30m', '\x1B[39m'],
-			//colors
 			'blue'          : ['\x1B[34m', '\x1B[39m'],
 			'cyan'          : ['\x1B[36m', '\x1B[39m'],
 			'green'         : ['\x1B[32m', '\x1B[39m'],
 			'magenta'       : ['\x1B[35m', '\x1B[39m'],
 			'red'           : ['\x1B[31m', '\x1B[39m'],
 			'yellow'        : ['\x1B[33m', '\x1B[39m'],
-			//background colors
+			//====================== background colors
 			//grayscale
 			'whiteBG'       : ['\x1B[47m', '\x1B[49m'],
 			'greyBG'        : ['\x1B[49;5;8m', '\x1B[49m'],
 			'blackBG'       : ['\x1B[40m', '\x1B[49m'],
-			//colors
 			'blueBG'        : ['\x1B[44m', '\x1B[49m'],
 			'cyanBG'        : ['\x1B[46m', '\x1B[49m'],
 			'greenBG'       : ['\x1B[42m', '\x1B[49m'],
@@ -72,9 +81,7 @@ module.exports = (function(){
 			'yellowBG'      : ['\x1B[43m', '\x1B[49m']
 		},
 		palette = {
-			// silly:   'rainbow',
 			verbose: 'cyan',
-			debug:   'cyan',
 			info:    'green',
 			data:    'grey',
 			warning: 'yellow',
@@ -87,12 +94,23 @@ module.exports = (function(){
 		return '';
 	};
 
+	//	example
+	//	return Date().substr(0,24)+ ' ' ;
+	logger.setPrefix = function(newPrefix){
+		
+		if(typeof newPrefix === 'function'){
+			prefix = newPrefix;
+		}
+
+		return logger;
+	};
+
 	//	set a new color to a type of logging
 	//	** carefull if color is not acceptable string...
-	logger.setColor = function(type, color){
+	logger.setColor = function(name, color){
 
-		if(palette[type] !== undefined && typeof color === 'string'){
-			palette[type] = color;
+		if(palette[name] !== undefined && typeof color === 'string'){
+			palette[name] = color;
 		}
 
 		return logger;
@@ -108,18 +126,7 @@ module.exports = (function(){
 		} else if (mode === 1){
 			on = true;
 		}
-		//	add whatever mode you want here...
-
-		return logger;
-	};
-
-	//	example
-	//	return Date().substr(0,24)+ ' ' ;
-	logger.setPrefix = function(newPrefix){
-		
-		if(typeof newPrefix === 'function'){
-			prefix = newPrefix;
-		}
+		//	add whatever modes you want here...
 
 		return logger;
 	};
@@ -129,6 +136,7 @@ module.exports = (function(){
 	var print = function(argsArray, type){
 
 		var argsToPrint = [],
+			lastArg,
 			prefixResult = prefix(),
 			style = palette[type],
 			stylePrepend = '',
@@ -141,17 +149,19 @@ module.exports = (function(){
 			argsToPrint = argsArray;
 		}
 		
+		lastArg = argsToPrint.length-1;
+
 		//	our 'extra' styles
 		[
 			'underline',
 			'bold',
+			'italic',
 			'inverse',
 			'strikethrough'
 		]
 		.some(function(mode){
 			// check if print mode flag is on
 			if(print[mode] === true){
-				//['\x1B[32m', '\x1B[39m']
 				styleAppend += styles[mode][1];
 				stylePrepend += styles[mode][0];
 				print[mode] = false;
@@ -159,9 +169,19 @@ module.exports = (function(){
 				return true;
 			}
 		});
-		argsToPrint.push(styleAppend + styles[style][1]);
-		argsToPrint = [stylePrepend + styles[style][0]].concat(argsToPrint);
 
+		if(typeof argsToPrint[lastArg] === 'string'){
+			argsToPrint[lastArg] = argsToPrint[lastArg] + styleAppend + styles[style][1];
+		} else {
+			argsToPrint.push(styleAppend + styles[style][1]);
+		}
+
+		if(typeof argsToPrint[0] === 'string'){
+			argsToPrint[0] = styles[style][0] + stylePrepend + argsToPrint[0];
+		} else {
+			argsToPrint = [stylePrepend + styles[style][0]].concat(argsToPrint);
+		}
+		
 		console.log.apply(this, argsToPrint);
 	};
 
@@ -169,41 +189,40 @@ module.exports = (function(){
 	//	set up function modes
 	Object
 	.keys(palette)
+	.concat(styles)
 	.forEach(function(type){
 
 		//	for each type we add function to logger
 		logger[type] = function(){
-			var argsArray = map(arguments);
-			
+
 			if(on){
-				print(argsArray, type);
-			} 
+				print(map(arguments), type);
+			}
 
 			return logger;
 		};
 
+		//	make the extra styling functions
 		[
 			'underline',
 			'bold',
+			'italic',
 			'inverse',
 			'strikethrough'
 		]
-		.forEach(function(style){
+		.forEach(function(extraStyle){
 
 			//	make the extra style object...
-			logger[style] = logger[style] || {};
+			logger[extraStyle] = logger[extraStyle] || {};
 			//	and attach the type functions as properties
-			logger[style][type] = function(){
+			logger[extraStyle][type] = function(){
 
 				// each time, they just turn a flag on, and call the classic print
-				print[style] = true;
+				print[extraStyle] = true;
 				logger[type].apply(this, map(arguments));
 			};
 		});
 	});
-
-	
-
 
 	return logger;
 }());

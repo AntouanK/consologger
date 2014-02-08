@@ -3,7 +3,7 @@
 var log = require('./consologger');
 
 log
-.text('hello',' from','| consologger')
+.text('hello',{ 'from': 'consologger'})
 .warning('warning: careful...');
 log.info({something: 'happened', I: ['guess']});
 log.info('info: nothing serious happened');
@@ -27,7 +27,7 @@ log
 .setMode(1)
 //	set a dynamic prefix for every line
 .setPrefix(function() {
-	return '['+Date().substr(0,24)+'] ';
+	return '['+Date().substr(0,24)+']';
 });
 
 log.text(function hello(again){ return 'back';});
@@ -47,3 +47,5 @@ setTimeout(function(){
 
 	log.text('back to normal again');
 },1000);
+
+//	add indentation levels
