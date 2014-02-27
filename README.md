@@ -1,6 +1,8 @@
 consologger
 ===========
 
+[![NPM](https://nodei.co/npm/consologger.png?downloads=true)](https://npmjs.org/package/consologger)
+
 A simple logger so you can manage all your 'console.log()' from a main lib. Coloured output, dynamic prefixing, and on/off switch.
 Feel free to make requests, report bugs, and suggest ideas.
 
