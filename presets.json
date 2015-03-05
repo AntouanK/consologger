@@ -7,9 +7,21 @@
     }
   },
   {
+    "name": "bgYellow",
+    "style": {
+      "background-color": "#F8D379"
+    }
+  },
+  {
     "name": "red",
     "style": {
       "color": "#C9393B"
+    }
+  },
+  {
+    "name": "bgRed",
+    "style": {
+      "background-color": "#C9393B"
     }
   },
   {
@@ -19,9 +31,21 @@
     }
   },
   {
+    "name": "bgBlue",
+    "style": {
+      "background-color": "#55B5DB"
+    }
+  },
+  {
     "name": "green",
     "style": {
       "color": "#9FCA56"
+    }
+  },
+  {
+    "name": "bgGreen",
+    "style": {
+      "background-color": "#9FCA56"
     }
   },
   {
@@ -31,9 +55,33 @@
     }
   },
   {
+    "name": "bgGrey",
+    "style": {
+      "background-color": "#41535B"
+    }
+  },
+  {
+    "name": "b",
+    "style": {
+      "font-weight": "bold"
+    }
+  },
+  {
+    "name": "i",
+    "style": {
+      "font-style": "italic"
+    }
+  },
+  {
     "name": "u",
     "style": {
       "text-decoration": "underline"
+    }
+  },
+  {
+    "name": "lThrough",
+    "style": {
+      "text-decoration": "line-through"
     }
   },
   {
@@ -52,6 +100,18 @@
     "name": "xLarge",
     "style": {
       "font-size": "x-large"
+    }
+  },
+  {
+    "name": "mono",
+    "style": {
+      "font-family": "monospace"
+    }
+  },
+  {
+    "name": "sans",
+    "style": {
+      "font-family": "sans-serif"
     }
   }
 ]

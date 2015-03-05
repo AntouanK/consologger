@@ -92,34 +92,4 @@ Consologger = function(){
 };
 
 
-
-
-/*
-console has:
-.error
-.warn
-.info
-.debug
-.log
-
-.table
-.dir
-
-.time
-.timeEnd
-
-
-'Menlo' font-family
-*/
-
-// consologger.warn    = printWithStyle('color: '+palette['warning']+';');
-// consologger.err     = printWithStyle('color: '+palette['error']+';');
-// consologger.ok      = printWithStyle('color: '+palette['success']+';');
-// consologger.comment = printWithStyle('color: '+palette['comment']+';');
-//
-// consologger.mono = printWithStyle('font-family: monospace;');
-// consologger.sans = printWithStyle('font-family: sans-serif;');
-//
-// consologger.shadow = printWithStyle('text-shadow: 1px 1px green;');
-
 module.exports = Consologger;
