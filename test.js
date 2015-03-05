@@ -1,11 +1,12 @@
 //	test.js for consologger
 
-var log = require('./consologger'),
-	i   = 0;
+var log 					= require('./consologger'),
+		packageJSON 	= require('./package.json'),
+		i   					= 0;
 
 //	chaining supported ( will try to implement same line appending later... )
 log
-.text('hello', { 'from': 'consologger', 'version': '0.1.4'})
+.text('hello', { 'from': 'consologger', 'version': packageJSON.version})
 .warning('warning: this is a work in progress...')
 .info('we can print everything now. objects, functions, whatever');
 

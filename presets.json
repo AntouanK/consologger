@@ -1,0 +1,57 @@
+[
+  {
+    "name": "yellow",
+    "style": {
+      "color": "#F8D379",
+      "text-shadow": "1px 1px #7B683A"
+    }
+  },
+  {
+    "name": "red",
+    "style": {
+      "color": "#C9393B"
+    }
+  },
+  {
+    "name": "blue",
+    "style": {
+      "color": "#55B5DB"
+    }
+  },
+  {
+    "name": "green",
+    "style": {
+      "color": "#9FCA56"
+    }
+  },
+  {
+    "name": "grey",
+    "style": {
+      "color": "#41535B"
+    }
+  },
+  {
+    "name": "u",
+    "style": {
+      "text-decoration": "underline"
+    }
+  },
+  {
+    "name": "small",
+    "style": {
+      "font-size": "small"
+    }
+  },
+  {
+    "name": "large",
+    "style": {
+      "font-size": "large"
+    }
+  },
+  {
+    "name": "xLarge",
+    "style": {
+      "font-size": "x-large"
+    }
+  }
+]

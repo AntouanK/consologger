@@ -1,85 +1,22 @@
 
 'use strict';
 
+var objectAssign = require('object-assign');
+
 var Consologger,
     presets,
     generatePresets,
     build,
-    applyStyle,
-    consologgerProto;
+    stringify,
+    styleToString;
 
-//  Consologger contructor
-Consologger = function(){
-  return this;
-};
+//--------------------------------------------------------------------------
 
-presets = [
-  {
-    name: 'yellow',
-    style: {
-      color: '#F8D379'
-    }
-  },
-  {
-    name: 'red',
-    style: {
-      color: '#C9393B'
-    }
-  },
-  {
-    name: 'blue',
-    style: {
-      color: '#55B5DB'
-    }
-  },
-  {
-    name: 'green',
-    style: {
-      color: '#9FCA56'
-    }
-  },
-  {
-    name: 'grey',
-    style: {
-      color: '#41535B'
-    }
-  }
-];
-
-
-applyStyle = function(){
-
-  // support varags, but simply cast to string in case there's only one arg
-  var args = arguments;
-  var argsLen = args.length;
-  var str = argsLen !== 0 && String(arguments[0]);
-  if (argsLen > 1) {
-    // don't slice `arguments`, it prevents v8 optimizations
-    for (var a = 1; a < argsLen; a++) {
-      str += ' ' + args[a];
-    }
-  }
-
-  console.info(this._styles);
-};
+presets = require('./presets.json');
 
 build = function(_styles) {
 
-  var builder = function builder() {
-    return applyStyle.apply(builder, arguments);
-  };
-
-  if(this._styles === undefined){
-    this._styles = [];
-  }
-
-  console.log('builder._styles', this._styles);
   this._styles.push(_styles);
-  builder.enabled = this.enabled;
-  // __proto__ is used because we must return a function, but there is
-  // no way to create a function with a different prototype.
-  builder.__proto__ = consologgerProto;
-  return builder;
 };
 
 generatePresets = function(){
@@ -93,8 +30,8 @@ generatePresets = function(){
 
     obj[presetKey] = {
       get: function(){
-        console.log('-- getter of', presetKey);
-        return build.call(this, [preset.style]);
+        build.call(this, preset.style);
+        return this;
       }
     };
   });
@@ -102,11 +39,60 @@ generatePresets = function(){
   return obj;
 };
 
-console.log('generatePresets', generatePresets());
+stringify = function(){
 
-consologgerProto = Object.defineProperties(Consologger, generatePresets());
+  var i = 0,
+      str = '';
 
-Object.defineProperties(Consologger.prototype, generatePresets());
+  for(; i<arguments.length; i+= 1){
+    str += arguments[i];
+  }
+
+  return str;
+};
+
+styleToString = function(obj){
+
+  var keyValues =
+  Object.keys(obj)
+  .map(function(key){
+    return key + ': ' + obj[key];
+  })
+  .join(';');
+
+  return keyValues + ';';
+};
+
+//  Consologger contructor
+Consologger = function(){
+
+  var print = function(){
+
+    var args = stringify.apply(null, arguments);
+
+    print._styles
+    .forEach(function(thisStyle){
+      objectAssign(print.style, thisStyle);
+    });
+
+    console.log.apply(console, ['%c'+args, styleToString(print.style)]);
+
+    //  reset the state
+    print._styles = [];
+    print.style = {}
+  };
+
+
+  print._styles = [];
+  print.style = {};
+
+  Object.defineProperties(print, generatePresets());
+
+  return print;
+};
+
+
+
 
 /*
 console has:
@@ -136,4 +122,4 @@ console has:
 //
 // consologger.shadow = printWithStyle('text-shadow: 1px 1px green;');
 
-module.exports = new Consologger();
+module.exports = Consologger;
