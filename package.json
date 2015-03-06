@@ -1,6 +1,6 @@
 {
   "name": "consologger",
-  "description": "A simple logger so you can manage all your 'console.log()' from a main lib. Coloured output, dynamic prefixing, and on/off switch. Feel free to make requests, report bugs, and suggest ideas.",
+  "description": "A simple logger so you can manage all your 'console.log()' from a main lib. Feel free to make requests, report bugs, and suggest ideas.",
   "version": "1.0.0",
   "author": "Antonis Karamitros",
   "homepage": "https://github.com/antouank/consologger",
