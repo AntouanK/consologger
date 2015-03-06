@@ -1,7 +1,9 @@
 
-# consologger changelog
+# consologger
+
 
 ## 1.0.0
+( 6 March 2015 )
 
 - browser version added
 - node version rewritten to follow the new API
