@@ -1,0 +1,74 @@
+[
+  {
+    "name": "text", "style": ["", ""]
+  },
+  {
+    "name": "bold", "style": ["\u001b[1m", "\u001b[22m"]
+  },
+  {
+    "name": "italic", "style": ["\u001b[3m", "\u001b[23m"]
+  },
+  {
+    "name": "underline", "style": ["\u001b[4m", "\u001b[24m"]
+  },
+  {
+    "name": "inverse", "style": ["\u001b[7m", "\u001b[27m"]
+  },
+  {
+    "name": "strikethrough", "style": ["\u001b[9m", "\u001b[29m"]
+  },
+  {
+    "name": "white", "style": ["\u001b[37m", "\u001b[39m"]
+  },
+  {
+    "name": "grey", "style": ["\u001b[90m", "\u001b[39m"]
+  },
+  {
+    "name": "black", "style": ["\u001b[30m", "\u001b[39m"]
+  },
+  {
+    "name": "blue", "style": ["\u001b[34m", "\u001b[39m"]
+  },
+  {
+    "name": "cyan", "style": ["\u001b[36m", "\u001b[39m"]
+  },
+  {
+    "name": "green", "style": ["\u001b[32m", "\u001b[39m"]
+  },
+  {
+    "name": "magenta", "style": ["\u001b[35m", "\u001b[39m"]
+  },
+  {
+    "name": "red", "style": ["\u001b[31m", "\u001b[39m"]
+  },
+  {
+    "name": "yellow", "style": ["\u001b[33m", "\u001b[39m"]
+  },
+  {
+    "name": "whiteBG", "style": ["\u001b[47m", "\u001b[49m"]
+  },
+  {
+    "name": "greyBG", "style": ["\u001b[49;5;8m", "\u001b[49m"]
+  },
+  {
+    "name": "blackBG", "style": ["\u001b[40m", "\u001b[49m"]
+  },
+  {
+    "name": "blueBG", "style": ["\u001b[44m", "\u001b[49m"]
+  },
+  {
+    "name": "cyanBG", "style": ["\u001b[46m", "\u001b[49m"]
+  },
+  {
+    "name": "greenBG", "style": ["\u001b[42m", "\u001b[49m"]
+  },
+  {
+    "name": "magentaBG", "style": ["\u001b[45m", "\u001b[49m"]
+  },
+  {
+    "name": "redBG", "style": ["\u001b[41m", "\u001b[49m"]
+  },
+  {
+    "name": "yellowBG", "style": ["\u001b[43m", "\u001b[49m"]
+  }
+]

@@ -3,111 +3,155 @@ consologger
 
 [![NPM](https://nodei.co/npm/consologger.png?downloads=true)](https://npmjs.org/package/consologger)
 
-A simple logger so you can manage all your 'console.log()' from a main lib. Coloured output, dynamic prefixing, and on/off switch.
+A simple logger so you can manage all your 'console.log()' from a main lib.
+Styled output, dynamic prefixing and custom presets.
 Feel free to make requests, report bugs, and suggest ideas.
 
 _prototypes were not harmed in making this library_
 
----
 
-#### ._someColorAlias_(valueToPrint[, other, values])
-my default 'palette', you can change it with .setColor
+### Example for the browser version
+
+
+Let's see a simple example.
+( we assume you use browserify or something so you can use the module on the browser )
+
+
 ```js
-{
-	verbose: 'cyan',
-	info:    'green',
-	data:    'grey',
-	warning: 'yellow',
-	error:   'red',
-	text:    'white'
-}
+//	Get the module, which is a constructor.
+var Consologger = require('consologger');
+
+//	Make a new instance for logging.
+var logger = new Consologger();
+
+//	Let's start logging.
+//	We make some green text.
+logger.green('Here\'s some green text');
+
+//	And then we print it.
+logger.print();
 ```
-see code below for examples
+You should have some green text in the console!
+Big deal.
 
-#### .setColor(name, color)
-give a name and the color you want to use for this name.
-this will be added to the 'palette' you have.
+### Chaining
 
-#### .setMode(mode)
-enable a mode
-- 'off' to disable printing
-- 'on' to enable priting
-- 'noStylePrefix' to leave prefix out of styling
-- 'stylePrefix' to include prefix in styling
+You can chain those calls.
 
-#### .setPrefix(fn)
-pass a function that returns a string which will be used as prefix for whatever consologger prints
-( you can include/exclude it from being styled )
-
-## Use example
+So the above would become
 ```js
-//	test.js for consologger
-
-var log = require('./consologger'),
-	i   = 0;
-
-//	chaining supported ( will try to implement same line appending later... )
-log
-.text('hello', { 'from': 'consologger', 'version': '0.1.4'})
-.warning('warning: this is a work in progress...')
-.info('we can print everything now. objects, functions, whatever');
-
-log.info({and: {colors: 'package', is: ['not needed now']}});
-
-//	set our favorite colours if we don't like the defaults
-log
-.setColor('debug', 'blue')
-.setColor('info', 'magenta')
-.setColor('invertError', 'redBG')
-//	let's print some stuff
-.info('info: nothing serious happened', 'just a color change')
-.debug('log.debug()', 'is now blue!')
-.verbose('calculating...')
-.data('1 + 2 = '+3)
-.strikethrough.data('3 + 2 = '+4)
-.error('that\'s wrong!')
-.bold.error('very wrong!')
-.invertError(['crazy', 'inverted', 'error']);
-
-log
-//	switch off the logger
-.setMode('off')
-.data('logger is now off so you can switch it off in a big project and avoid useless printing')
-.text('YOU ARE NOT SUPPOSED TO SEE THIS')
-.error(undefined)
-//	switch on again
-.setMode('on')
-.bold.info({"let 's add": {a: 'prefix now'}})
-//	set a dynamic prefix for every line
-.setPrefix(function() {
-	return '['+Date().substr(0,24)+']['+(i+=1)+']';
-});
-
-//	print functions
-log.text(function hello(again){ return 'back';});
-
-//	remove prefix styling
-log.setMode('noStylePrefix');
-
-log.underline.text('click here');
-
-//	revert to have prefix styled
-log.setMode('stylePrefix');
-
-log
-.data('just kidding ( showing off underline )')
-.info({ we: 'have', live: ['time','prefix']});
-
-//	set prefix off
-log.setPrefix(function() {
-	return '';
-});
-
-log.text('keep logging...');
-log.underline.text('npmjs.org/package/consologger');
-
-//	TODO: add indentation levels
-//	TODO: add same line identing
+logger
+.green('Here\'s some green text')
+.print();
+```
+Now, you can also chain presets ( styles basically ).
+For example, `u` is the preset for underline and `mono` is the preset for monospace font.
+```js
+logger
+.u.mono.red('red monospace for retro errors')
+.print();
 ```
 
-<img src="http://i.imgur.com/6mS2gv6.png" border = "0"/>
+And you can add more text/presets before hitting print, so that will result in a line with those combined.
+```js
+logger
+.red('[ERROR] ')
+.mono.bgRed('Ln 0 Col 0')
+//	text is the "plain" preset, without any styles
+.text(' Some error happened there (go fix it!)')
+.print();
+```
+
+### Presets
+
+There are some presets coming with the module, covering the most common and simple use cases.
+you can see them in the `presets.json` file.
+
+But it's very easy to add your own presets.
+Here's an example
+
+```js
+var Consologger = require('consologger');
+var logger = new Consologger();
+var myNewStyle;
+
+myNewStyle = {
+	name: 'cyanItalic',
+	//	style is basically CSS
+	style: {
+		color: 'cyan',
+		'font-style': 'italic'
+	}
+};
+
+logger
+.addPreset(myNewStyle);
+
+logger
+.cyanItalic('my fancy cyan text')
+.print();
+
+logger
+.text('✅')
+.green.lThrough('make a module to make logging awesome')
+.print();
+```
+
+### Prefix
+
+You can add a prefix on a consologger instance.
+Let's say I'm in a context in my code where I want to separate visually whether the logging I see comes from that context or not.
+```js
+var foo = function(){
+
+	var fooLogger = new Consologger();
+
+	fooLogger
+	.bgRed.mono('[ foo() ]')
+	.prefix();
+
+	// ...
+	fooLogger
+	.red('not this error again')
+	.print();
+};
+
+setTimeout(foo, 500);
+
+var logger = new Consologger();
+
+logger
+.red('not this error again')
+.print();
+```
+
+## node.js version
+
+For node there are some presets with terminal specific stuff.
+
+`.addPreset` doesn't work because it makes no sense to add a new preset...
+
+## API
+
+### Consologger
+contructor of a new consologger instance.
+That new instance can hold prefix state.
+
+### .*preset*
+when using a preset ( see list of presets [here](https://github.com/AntouanK/consologger/blob/develop/dist/presets.json) ), you add the style of that preset to the current styles of the consologger instance.
+
+### .*preset*(text)
+when passing a text to a preset function, you apply the current styles to that text, and keep it in the consologger line buffer.
+( for now, only strings are accepted )
+
+### .print()
+prints whatever the line buffer has, with the styles applied on each string separately.
+If the consologger instance has a prefix set, that's going to be prepended to the line buffer.
+
+### .prefix()
+takes the line buffer and saves is as a prefix so that every next `.print()` will inlude the prefix value first.
+
+### .addPreset(presetObject)
+Adds a new preset.
+`presetObject` must have a 'name' field with a string value, and a 'style' field that's an object and has the CSS values you want to apply.
+( for now, you cannot override presets that already exist )
