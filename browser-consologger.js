@@ -6,19 +6,23 @@ var objectAssign = require('object-assign');
 var Consologger,
     presets,
     generatePresets,
-    build,
+    addStyle,
     stringify,
-    styleToString;
+    styleToString,
+    addPreset,
+    convertInputsToStrings;
 
 //--------------------------------------------------------------------------
 
 presets = require('./presets.json');
 
-build = function(_styles) {
+addStyle = function(style) {
 
-  this._styles.push(_styles);
+  this._curStyles.push(style);
 };
 
+//  generate the presets getter functions
+//  returns an object of them
 generatePresets = function(){
 
   var obj = {};
@@ -26,11 +30,11 @@ generatePresets = function(){
   presets
   .forEach(function(preset){
 
-    var presetKey = preset.name;
-
-    obj[presetKey] = {
+    obj[preset.name] = {
+      //  the getter will append the style to the current ones when chaining
       get: function(){
-        build.call(this, preset.style);
+
+        addStyle.call(this, preset.style);
         return this;
       }
     };
@@ -39,18 +43,30 @@ generatePresets = function(){
   return obj;
 };
 
-stringify = function(){
+//  adds a given preset to the `presets` array
+addPreset = function(preset){
 
-  var i = 0,
-      str = '';
-
-  for(; i<arguments.length; i+= 1){
-    str += arguments[i];
+  if(preset === null || typeof preset !== 'object'){
+    throw new Error('.addPreset takes an object as argument');
   }
 
-  return str;
+  if(typeof preset.name !== 'string' || preset.name === ''){
+    throw new Error('the preset given does not have a valid name property');
+  }
+
+  if(preset.style === null || typeof preset.style !== 'object'){
+    throw new Error('the preset given does not have a valid style property');
+  }
+
+  presets.push(preset);
 };
 
+//  returns one string that represents the arguments joined with a space
+stringify = function(){
+  return Array.prototype.join.call(arguments, ' ');
+};
+
+//  converts a style object to a string just like the console.log expects
 styleToString = function(obj){
 
   var keyValues =
@@ -63,33 +79,109 @@ styleToString = function(obj){
   return keyValues + ';';
 };
 
-//  Consologger contructor
-Consologger = function(){
+//  given some input objects ( they have `arg` and `style` ),
+//  we get back an array of strings that works for `console.log`
+convertInputsToStrings = function(inputs){
 
-  var print = function(){
+  var styles = [],
+      argString;
 
-    var args = stringify.apply(null, arguments);
+  argString = inputs.map(function(input){ return '%c'+input.arg; }).join('');
 
-    print._styles
-    .forEach(function(thisStyle){
-      objectAssign(print.style, thisStyle);
-    });
+  styles =
+  inputs
+  .map(function(input){
+    return styleToString(input.style);
+  });
 
-    console.log.apply(console, ['%c'+args, styleToString(print.style)]);
-
-    //  reset the state
-    print._styles = [];
-    print.style = {}
-  };
-
-
-  print._styles = [];
-  print.style = {};
-
-  Object.defineProperties(print, generatePresets());
-
-  return print;
+  return [argString].concat(styles);
 };
 
+//  -------------------------------------------------------------------------
+//  Consologger contructor
+Consologger = function(defaults){
 
+  //  if a default style is not given, make an empty one
+  if(
+    !defaults ||
+    defaults.style === null ||
+    typeof defaults.style !== 'object'
+  ){
+    defaults = { style: {} };
+  }
+
+  var loggerInstance = this;
+
+  loggerInstance._inputsBuffer = [];
+
+  //  the main builder function
+  //  that's what we return, and all the presets are properties of this
+  var builder = function(){
+
+    //  make the arguments one string
+    var args = stringify.apply(null, arguments);
+
+    //  make the final styles object
+    builder
+    ._curStyles
+    .forEach(function(thisStyle){
+      objectAssign(builder._curStyle, thisStyle);
+    });
+
+
+    loggerInstance
+    ._inputsBuffer
+    .push({
+      arg: args,
+      style: builder._curStyle
+    });
+
+    //  now we have the aggregated style at `builder._curStyle`
+
+    // if(builder._prefix){
+    //   if(typeof builder._prefix === 'function'){
+    //     args = (builder._prefix() + '') + args;
+    //   } else {
+    //     args = builder._prefix + args;
+    //   }
+    // }
+
+    //  reset the state
+    builder._curStyle = objectAssign({}, defaults.style);
+    builder._curStyles = [];
+
+    return builder;
+  };
+
+  builder._curStyle = objectAssign({}, defaults.style);
+  builder._curStyles = [];
+
+  //  for every preset, make a property on builder
+  //  the getter is going to add that style before running builder
+  Object.defineProperties(builder, generatePresets());
+  builder.addPreset = addPreset;
+
+  // builder.prefix = function(arg){
+  //   if(typeof arg !== 'string' && typeof arg !== 'function'){
+  //     throw new Error('.prefix argument must be a string or a function');
+  //   }
+  //
+  //   this._prefix = arg;
+  //   return builder;
+  // };
+
+  builder.print = function(){
+
+    var finalArg = convertInputsToStrings(loggerInstance._inputsBuffer);
+
+    console.log.apply(console, finalArg);
+
+    //  reset the instance's buffer array
+    loggerInstance._inputsBuffer = [];
+  };
+
+  return builder;
+};
+
+//  ----------------------------------------------- export -----------------
 module.exports = Consologger;
