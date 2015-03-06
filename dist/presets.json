@@ -1,15 +1,19 @@
 [
   {
+    "name": "text",
+    "style": {}
+  },
+  {
     "name": "yellow",
     "style": {
-      "color": "#F8D379",
-      "text-shadow": "1px 1px #7B683A"
+      "color": "#FDC641"
     }
   },
   {
     "name": "bgYellow",
     "style": {
-      "background-color": "#F8D379"
+      "background-color": "#F8D379",
+      "padding": "1px 2px"
     }
   },
   {
@@ -21,7 +25,9 @@
   {
     "name": "bgRed",
     "style": {
-      "background-color": "#C9393B"
+      "color": "white",
+      "background-color": "#C9393B",
+      "padding": "1px 2px"
     }
   },
   {
@@ -33,7 +39,8 @@
   {
     "name": "bgBlue",
     "style": {
-      "background-color": "#55B5DB"
+      "background-color": "#55B5DB",
+      "padding": "1px 2px"
     }
   },
   {
@@ -45,7 +52,8 @@
   {
     "name": "bgGreen",
     "style": {
-      "background-color": "#9FCA56"
+      "background-color": "#9FCA56",
+      "padding": "1px 2px"
     }
   },
   {
@@ -57,7 +65,9 @@
   {
     "name": "bgGrey",
     "style": {
-      "background-color": "#41535B"
+      "background-color": "#41535B",
+      "color": "white",
+      "padding": "1px 2px"
     }
   },
   {

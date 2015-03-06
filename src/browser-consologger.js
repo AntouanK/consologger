@@ -4,7 +4,8 @@
 var objectAssign = require('object-assign');
 
 var Consologger,
-    presets,
+    defaultPresets,
+    generatePreset,
     generatePresets,
     addStyle,
     stringify,
@@ -14,7 +15,7 @@ var Consologger,
 
 //--------------------------------------------------------------------------
 
-presets = require('./presets.json');
+defaultPresets = require('./presets.json');
 
 addStyle = function(style) {
 
@@ -23,7 +24,7 @@ addStyle = function(style) {
 
 //  generate the presets getter functions
 //  returns an object of them
-generatePresets = function(){
+generatePresets = (presets) => {
 
   var obj = {};
 
@@ -43,6 +44,21 @@ generatePresets = function(){
   return obj;
 };
 
+generatePreset = (preset) => {
+  var obj = {};
+
+  obj[preset.name] = {
+    //  the getter will append the style to the current ones when chaining
+    get: function(){
+
+      addStyle.call(this, preset.style);
+      return this;
+    }
+  };
+
+  return obj;
+};
+
 //  adds a given preset to the `presets` array
 addPreset = function(preset){
 
@@ -58,16 +74,20 @@ addPreset = function(preset){
     throw new Error('the preset given does not have a valid style property');
   }
 
-  presets.push(preset);
+  defaultPresets.push(preset);
+
+  var builder = this;
+
+  Object.defineProperties(builder, generatePreset(preset));
 };
 
 //  returns one string that represents the arguments joined with a space
-stringify = function(){
+stringify = function() {
   return Array.prototype.join.call(arguments, ' ');
 };
 
 //  converts a style object to a string just like the console.log expects
-styleToString = function(obj){
+styleToString = (obj) => {
 
   var keyValues =
   Object.keys(obj)
@@ -81,18 +101,23 @@ styleToString = function(obj){
 
 //  given some input objects ( they have `arg` and `style` ),
 //  we get back an array of strings that works for `console.log`
-convertInputsToStrings = function(inputs){
+convertInputsToStrings = (inputs) => {
 
   var styles = [],
       argString;
 
-  argString = inputs.map(function(input){ return '%c'+input.arg; }).join('');
+  argString =
+    inputs
+    .map(function(input){
+      return '%c'+input.arg;
+    })
+    .join('');
 
   styles =
-  inputs
-  .map(function(input){
-    return styleToString(input.style);
-  });
+    inputs
+    .map(function(input){
+      return styleToString(input.style);
+    });
 
   return [argString].concat(styles);
 };
@@ -136,16 +161,6 @@ Consologger = function(defaults){
       style: builder._curStyle
     });
 
-    //  now we have the aggregated style at `builder._curStyle`
-
-    // if(builder._prefix){
-    //   if(typeof builder._prefix === 'function'){
-    //     args = (builder._prefix() + '') + args;
-    //   } else {
-    //     args = builder._prefix + args;
-    //   }
-    // }
-
     //  reset the state
     builder._curStyle = objectAssign({}, defaults.style);
     builder._curStyles = [];
@@ -158,19 +173,16 @@ Consologger = function(defaults){
 
   //  for every preset, make a property on builder
   //  the getter is going to add that style before running builder
-  Object.defineProperties(builder, generatePresets());
-  builder.addPreset = addPreset;
+  Object.defineProperties(builder, generatePresets(defaultPresets));
 
-  // builder.prefix = function(arg){
-  //   if(typeof arg !== 'string' && typeof arg !== 'function'){
-  //     throw new Error('.prefix argument must be a string or a function');
-  //   }
-  //
-  //   this._prefix = arg;
-  //   return builder;
-  // };
+  //  main print function
+  builder.print = () => {
 
-  builder.print = function(){
+    if(loggerInstance._prefix !== undefined){
+      loggerInstance._inputsBuffer =
+      loggerInstance._prefix
+      .concat(loggerInstance._inputsBuffer);
+    }
 
     var finalArg = convertInputsToStrings(loggerInstance._inputsBuffer);
 
@@ -179,6 +191,13 @@ Consologger = function(defaults){
     //  reset the instance's buffer array
     loggerInstance._inputsBuffer = [];
   };
+
+  builder.prefix = function(){
+    loggerInstance._prefix = loggerInstance._inputsBuffer.slice();
+    loggerInstance._inputsBuffer = [];
+  };
+
+  builder.addPreset = addPreset.bind(builder);
 
   return builder;
 };

@@ -19,10 +19,15 @@
     "node": ">= 0.2"
   },
   "scripts": {
-    "test": "node ./test.js"
+    "test": "node ./test.js",
+    "transpile": "./node_modules/babel/bin/babel/index.js ./src --out-dir ./dist",
+    "transpile:watch": "./node_modules/babel/bin/babel/index.js ./src --watch --out-dir ./dist"
   },
   "main": "consologger",
   "dependencies": {
     "object-assign": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel": "^4.6.6"
   }
 }

@@ -8,9 +8,9 @@
 var consologger;
 
 if(process.browser === true){
-	consologger = require('./browser-consologger');
+	consologger = require('./dist/browser-consologger');
 } else {
-	consologger = require('./node-consologger');
+	consologger = require('./dist/node-consologger');
 }
 
 module.exports = consologger;
