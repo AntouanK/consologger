@@ -14,7 +14,7 @@ _prototypes were not harmed in making this library_
 
 
 Let's see a simple example.
-( we assume we use browserify so you can use the module on the browser )
+( we assume you use browserify or something so you can use the module on the browser )
 
 
 ```js
@@ -93,7 +93,7 @@ logger
 
 logger
 .text('✅')
-.green.lThrough('make a module to log like a unicorn')
+.green.lThrough('make a module to make logging awesome')
 .print();
 ```
 
@@ -105,14 +105,15 @@ Let's say I'm in a context in my code where I want to separate visually whether 
 var foo = function(){
 
 	var fooLogger = new Consologger();
+
 	fooLogger
 	.bgRed.mono('[ foo() ]')
 	.prefix();
 
 	// ...
 	fooLogger
-  .red('some error happened')
-  .print();
+	.red('not this error again')
+	.print();
 };
 
 setTimeout(foo, 500);
@@ -120,6 +121,37 @@ setTimeout(foo, 500);
 var logger = new Consologger();
 
 logger
-.red('some error happened')
+.red('not this error again')
 .print();
 ```
+
+## node.js version
+
+For node there are some presets with terminal specific stuff.
+
+`.addPreset` doesn't work because it makes no sense to add a new preset...
+
+## API
+
+### Consologger
+contructor of a new consologger instance.
+That new instance can hold prefix state.
+
+### .*preset*
+when using a preset ( see list of presets [here](https://github.com/AntouanK/consologger/blob/develop/dist/presets.json) ), you add the style of that preset to the current styles of the consologger instance.
+
+### .*preset*(text)
+when passing a text to a preset function, you apply the current styles to that text, and keep it in the consologger line buffer.
+( for now, only strings are accepted )
+
+### .print()
+prints whatever the line buffer has, with the styles applied on each string separately.
+If the consologger instance has a prefix set, that's going to be prepended to the line buffer.
+
+### .prefix()
+takes the line buffer and saves is as a prefix so that every next `.print()` will inlude the prefix value first.
+
+### .addPreset(presetObject)
+Adds a new preset.
+`presetObject` must have a 'name' field with a string value, and a 'style' field that's an object and has the CSS values you want to apply.
+( for now, you cannot override presets that already exist )

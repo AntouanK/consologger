@@ -19,7 +19,6 @@
     "node": ">= 0.2"
   },
   "scripts": {
-    "test": "node ./test.js",
     "transpile": "./node_modules/babel/bin/babel/index.js ./src --out-dir ./dist",
     "transpile:watch": "./node_modules/babel/bin/babel/index.js ./src --watch --out-dir ./dist"
   },
