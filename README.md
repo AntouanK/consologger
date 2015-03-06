@@ -10,7 +10,7 @@ Feel free to make requests, report bugs, and suggest ideas.
 _prototypes were not harmed in making this library_
 
 
-### Example
+### Example for the browser version
 
 
 Let's see a simple example.
@@ -45,12 +45,10 @@ logger
 .print();
 ```
 Now, you can also chain presets ( styles basically ).
-For example, u is the preset for underline and mono is the preset for monospace font.
+For example, `u` is the preset for underline and `mono` is the preset for monospace font.
 ```js
 logger
-.u
-.mono
-.red('red monospace for retro errors')
+.u.mono.red('red monospace for retro errors')
 .print();
 ```
 
@@ -58,9 +56,9 @@ And you can add more text/presets before hitting print, so that will result in a
 ```js
 logger
 .red('[ERROR] ')
-.mono
-.bgRed('Ln 0 Col 0')
-.text(' ', 'Some error happened there, go fix it!')
+.mono.bgRed('Ln 0 Col 0')
+//	text is the "plain" preset, without any styles
+.text(' Some error happened there (go fix it!)')
 .print();
 ```
 
@@ -91,5 +89,32 @@ logger
 
 logger
 .cyanItalic('my fancy cyan text')
+.print();
+```
+
+### Prefix
+
+You can add a prefix on a consologger instance.
+Let's say I'm in a context in my code where I want to separate visually whether the logging I see comes from that context or not.
+```js
+var foo = function(){
+
+	var fooLogger = new Consologger();
+	fooLogger
+  .bgRed.mono('[ foo() ]')
+  .prefix();
+
+	// ...
+	fooLogger
+  .red('some error happened')
+  .print();
+};
+
+setTimeout(foo, 500);
+
+var logger = new Consologger();
+
+logger
+.red('some error happened')
 .print();
 ```
