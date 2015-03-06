@@ -1,7 +1,10 @@
 consologger
 ===========
 
-[![NPM](https://nodei.co/npm/consologger.png?downloads=true)](https://npmjs.org/package/consologger)
+[![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]
+[downloads-image]: http://img.shields.io/npm/dm/consologger.svg
+[npm-url]: https://npmjs.org/package/consologger
+[npm-image]: https://img.shields.io/npm/v/consologger.svg
 
 A simple logger so you can manage all your 'console.log()' from a main lib.
 Styled output, dynamic prefixing and custom presets.
