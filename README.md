@@ -101,8 +101,8 @@ var foo = function(){
 
 	var fooLogger = new Consologger();
 	fooLogger
-  .bgRed.mono('[ foo() ]')
-  .prefix();
+	.bgRed.mono('[ foo() ]')
+	.prefix();
 
 	// ...
 	fooLogger
