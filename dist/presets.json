@@ -1,0 +1,127 @@
+[
+  {
+    "name": "text",
+    "style": {}
+  },
+  {
+    "name": "yellow",
+    "style": {
+      "color": "#FDC641"
+    }
+  },
+  {
+    "name": "bgYellow",
+    "style": {
+      "background-color": "#F8D379",
+      "padding": "1px 2px"
+    }
+  },
+  {
+    "name": "red",
+    "style": {
+      "color": "#C9393B"
+    }
+  },
+  {
+    "name": "bgRed",
+    "style": {
+      "color": "white",
+      "background-color": "#C9393B",
+      "padding": "1px 2px"
+    }
+  },
+  {
+    "name": "blue",
+    "style": {
+      "color": "#55B5DB"
+    }
+  },
+  {
+    "name": "bgBlue",
+    "style": {
+      "background-color": "#55B5DB",
+      "padding": "1px 2px"
+    }
+  },
+  {
+    "name": "green",
+    "style": {
+      "color": "#9FCA56"
+    }
+  },
+  {
+    "name": "bgGreen",
+    "style": {
+      "background-color": "#9FCA56",
+      "padding": "1px 2px"
+    }
+  },
+  {
+    "name": "grey",
+    "style": {
+      "color": "#41535B"
+    }
+  },
+  {
+    "name": "bgGrey",
+    "style": {
+      "background-color": "#41535B",
+      "color": "white",
+      "padding": "1px 2px"
+    }
+  },
+  {
+    "name": "b",
+    "style": {
+      "font-weight": "bold"
+    }
+  },
+  {
+    "name": "i",
+    "style": {
+      "font-style": "italic"
+    }
+  },
+  {
+    "name": "u",
+    "style": {
+      "text-decoration": "underline"
+    }
+  },
+  {
+    "name": "lThrough",
+    "style": {
+      "text-decoration": "line-through"
+    }
+  },
+  {
+    "name": "small",
+    "style": {
+      "font-size": "small"
+    }
+  },
+  {
+    "name": "large",
+    "style": {
+      "font-size": "large"
+    }
+  },
+  {
+    "name": "xLarge",
+    "style": {
+      "font-size": "x-large"
+    }
+  },
+  {
+    "name": "mono",
+    "style": {
+      "font-family": "monospace"
+    }
+  },
+  {
+    "name": "sans",
+    "style": {
+      "font-family": "sans-serif"
+    }
+  }
+]

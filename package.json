@@ -1,17 +1,33 @@
 {
-    "name": "consologger",
-    "description": "A simple logger so you can manage all your 'console.log()' from a main lib. Coloured output, dynamic prefixing, and on/off switch. Feel free to make requests, report bugs, and suggest ideas.",
-    "version": "0.1.41",
-    "author": "Antonis Karamitros",
-    "homepage": "https://github.com/antouank/consologger",
-    "bugs": "https://github.com/antouank/consologger/issues",
-    "keywords": [ "console", "log", "logger", "colors" ],
-    "repository": {
-        "type": "git",
-        "url": "http://github.com/antouank/consologger.git"
-    },
-    "engines": {
-        "node": ">= 0.1.9"
-    },
-    "main": "consologger"
+  "name": "consologger",
+  "description": "A simple logger so you can manage all your 'console.log()' from a main lib. Coloured output, dynamic prefixing, and on/off switch. Feel free to make requests, report bugs, and suggest ideas.",
+  "version": "1.0.0",
+  "author": "Antonis Karamitros",
+  "homepage": "https://github.com/antouank/consologger",
+  "bugs": "https://github.com/antouank/consologger/issues",
+  "keywords": [
+    "console",
+    "log",
+    "logger",
+    "colors"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/antouank/consologger.git"
+  },
+  "engines": {
+    "node": ">= 0.2"
+  },
+  "scripts": {
+    "test": "node ./test.js",
+    "transpile": "./node_modules/babel/bin/babel/index.js ./src --out-dir ./dist",
+    "transpile:watch": "./node_modules/babel/bin/babel/index.js ./src --watch --out-dir ./dist"
+  },
+  "main": "consologger",
+  "dependencies": {
+    "object-assign": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel": "^4.6.6"
+  }
 }
