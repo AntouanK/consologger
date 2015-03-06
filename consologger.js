@@ -8,9 +8,13 @@
 var consologger;
 
 if(process.browser === true){
-	consologger = require('./dist/browser-consologger');
+  (function(){
+    consologger = require('./dist/browser-consologger');
+  })();
 } else {
-	consologger = require('./dist/node-consologger');
+  (function(){
+    consologger = require('./dist/node-consologger');
+  })();
 }
 
 module.exports = consologger;

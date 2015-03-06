@@ -90,6 +90,11 @@ logger
 logger
 .cyanItalic('my fancy cyan text')
 .print();
+
+logger
+.text('✅')
+.green.lThrough('make a module to log like a unicorn')
+.print();
 ```
 
 ### Prefix

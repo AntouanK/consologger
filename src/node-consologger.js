@@ -1,237 +1,151 @@
 
-module.exports = (function(){
+'use strict';
 
-	'use strict';
+var objectAssign = require('object-assign');
 
-	//	module requires console
-	if(console === undefined){
-		throw new Error('console not found!');
-	}
+var Consologger,
+    defaultPresets,
+    generatePresets,
+    mergeStyles,
+    addStyle,
+    stringify,
+    convertInputsToStrings;
 
-	//	make a map function to use for the 'arguments' conversion to Array
-	function map(args){
+//--------------------------------------------------------------------------
 
-		var argsArray,
-			i;
+defaultPresets = require('./node-presets.json');
 
-		if(args === undefined){
-			return [];
-		}
+addStyle = function(style) {
 
-		argsArray = [];
+  this._curStyles.push(style);
+};
 
-		for(i=0; i< args.length; i+=1){
-			argsArray.push(args[i]);
-		}
+mergeStyles = (styles) => {
 
-		return argsArray;
-	};
+  var mergedStyle = [];
 
-	function addStyle(value, style){
+  mergedStyle
+  .push(styles.map((style) => { return style[0]; }).join(''));
 
-		if(typeof value === 'string'){
-			return styles[style][0] + value + styles[style][1];
-		} else if(value === undefined || typeof value.length !== 'number' ){
-			return value;
-		} else {
-			return [styles[style][0]].concat(value).concat([styles[style][1]]);
-		}
-	}
-	//-------------------------------------------
+  mergedStyle
+  .push(styles.map((style) => { return style[1]; }).join(''));
 
-	//	module variables
-	//
-	var logger          = {},
-		loggerAdditional  = {},
-		on                = true,
-		stylePrefix       = false,
-		styles = {
-			//====================== styles
-			'bold'          : ['\x1B[1m',  '\x1B[22m'],
-			'italic'        : ['\x1B[3m',  '\x1B[23m'],
-			'underline'     : ['\x1B[4m',  '\x1B[24m'],
-			'inverse'       : ['\x1B[7m',  '\x1B[27m'],
-			'strikethrough' : ['\x1B[9m',  '\x1B[29m'],
-			//====================== text colors
-			//grayscale
-			'white'         : ['\x1B[37m', '\x1B[39m'],
-			'grey'          : ['\x1B[90m', '\x1B[39m'],
-			'black'         : ['\x1B[30m', '\x1B[39m'],
-			'blue'          : ['\x1B[34m', '\x1B[39m'],
-			'cyan'          : ['\x1B[36m', '\x1B[39m'],
-			'green'         : ['\x1B[32m', '\x1B[39m'],
-			'magenta'       : ['\x1B[35m', '\x1B[39m'],
-			'red'           : ['\x1B[31m', '\x1B[39m'],
-			'yellow'        : ['\x1B[33m', '\x1B[39m'],
-			//====================== background colors
-			//grayscale
-			'whiteBG'       : ['\x1B[47m', '\x1B[49m'],
-			'greyBG'        : ['\x1B[49;5;8m', '\x1B[49m'],
-			'blackBG'       : ['\x1B[40m', '\x1B[49m'],
-			'blueBG'        : ['\x1B[44m', '\x1B[49m'],
-			'cyanBG'        : ['\x1B[46m', '\x1B[49m'],
-			'greenBG'       : ['\x1B[42m', '\x1B[49m'],
-			'magentaBG'     : ['\x1B[45m', '\x1B[49m'],
-			'redBG'         : ['\x1B[41m', '\x1B[49m'],
-			'yellowBG'      : ['\x1B[43m', '\x1B[49m']
-		},
-		palette = {
-			verbose: 'cyan',
-			info:    'green',
-			data:    'grey',
-			warning: 'yellow',
-			error:   'red',
-			text:    'white'
-		};
+  return mergedStyle;
+};
 
-	//	prefix fun, to return a dynamic prefix string
-	var prefix = function(){
-		return '';
-	};
+//  generate the presets getter functions
+//  returns an object of them
+generatePresets = (presets) => {
 
-	//	example
-	//	return Date().substr(0,24)+ ' ' ;
-	logger.setPrefix = function(newPrefix){
+  var obj = {};
 
-		if(typeof newPrefix === 'function'){
-			prefix = newPrefix;
-		}
+  presets
+  .forEach(function(preset){
 
-		return logger;
-	};
+    obj[preset.name] = {
+      //  the getter will append the style to the current ones when chaining
+      get: function(){
 
-	//	set a new color to a type of logging
-	//	** carefull if color is not acceptable string...
-	logger.setColor = function(name, color){
+        addStyle.call(this, preset.style);
+        return this;
+      }
+    };
+  });
 
-		if(typeof color !== 'string'){
-			return logger;
-		}
+  return obj;
+};
 
-		palette[name] = color;
-
-		makeFunction(name);
-
-		return logger;
-	};
-
-	//	set the mode you want to use ( default is 1, open )
-	//	0 to close the logger
-	//	1 to open it
-	logger.setMode = function(mode){
-
-		if(mode === 0 || mode === 'off'){
-			on = false;
-		} else if (mode === 1 || mode === 'on'){
-			on = true;
-		} else if(mode === 'stylePrefix'){
-			stylePrefix = true;
-		} else if(mode === 'noStylePrefix'){
-			stylePrefix = false;
-		}
-		//	add whatever modes you want here...
-
-		return logger;
-	};
+//  returns one string that represents the arguments joined with a space
+stringify = function() {
+  return Array.prototype.join.call(arguments, ' ');
+};
 
 
-	//	basic print function -------------------------
-	var print = function(argsArray, type){
+//  given some input objects ( they have `arg` and `style` ),
+//  we get back an array of strings that works for `console.log`
+convertInputsToStrings = (inputs) => {
 
-		var argsToPrint = [],
-			lastArg,
-			prefixResult = prefix(),
-			style = palette[type],
-			stylePrepend = '',
-			styleAppend = '';
+  var argStrings;
 
-		//	if prefix is in style, and not '', push it in the args
-		if(prefixResult !== '' && stylePrefix === true){
-			argsToPrint.push(prefixResult);
-			argsToPrint = argsToPrint.concat(argsArray);
-		} else {
-			argsToPrint = argsArray;
-		}
+  argStrings =
+    inputs
+    .map(function(input){
+      return input.style[0] + input.arg + input.style[1];
+    });
 
-		lastArg = argsToPrint.length-1;
+  return argStrings;
+};
 
-		//	our 'extra' styles
-		[
-			'underline',
-			'bold',
-			'italic',
-			'inverse',
-			'strikethrough'
-		]
-		.some(function(mode){
-			// check if print mode flag is on
-			if(print[mode] === true){
-				styleAppend += styles[mode][1];
-				stylePrepend += styles[mode][0];
-				print[mode] = false;
-				//	exit loop
-				return true;
-			}
-		});
+//  -------------------------------------------------------------------------
+//  Consologger contructor
+Consologger = function(defaults){
 
-		if(typeof argsToPrint[lastArg] === 'string'){
-			argsToPrint[lastArg] = argsToPrint[lastArg] + styleAppend + styles[style][1];
-		} else {
-			argsToPrint.push(styleAppend + styles[style][1]);
-		}
+  //  if a default style is not given, make an empty one
+  if(
+    !defaults ||
+    defaults.style === null ||
+    typeof defaults.style !== 'object'
+  ){
+    defaults = { style: {} };
+  }
 
-		if(typeof argsToPrint[0] === 'string'){
-			argsToPrint[0] = styles[style][0] + stylePrepend + argsToPrint[0];
-		} else {
-			argsToPrint = [stylePrepend + styles[style][0]].concat(argsToPrint);
-		}
+  var loggerInstance = this;
 
-		if(prefixResult !== '' && stylePrefix === false){
-			argsToPrint = [prefixResult].concat(argsToPrint);
-		}
+  loggerInstance._inputsBuffer = [];
 
-		console.log.apply(this, argsToPrint);
-		return logger;
-	};
+  //  the main builder function
+  //  that's what we return, and all the presets are properties of this
+  var builder = function(){
 
-	var makeFunction = function(type){
+    //  make the arguments one string
+    var args = stringify.apply(null, arguments);
 
-		//	for each type we add function to logger
-		logger[type] = function(){
+    builder._curStyle = mergeStyles(builder._curStyles);
 
-			if(on){
-				print(map(arguments), type);
-			}
+    loggerInstance
+    ._inputsBuffer
+    .push({
+      arg: args,
+      style: builder._curStyle
+    });
 
-			return logger;
-		};
+    //  reset the state
+    builder._curStyle = objectAssign({}, defaults.style);
+    builder._curStyles = [];
 
-		//	make the extra styling functions
-		[
-			'underline',
-			'bold',
-			'italic',
-			'inverse',
-			'strikethrough'
-		]
-		.forEach(function(extraStyle){
+    return builder;
+  };
 
-			//	make the extra style object...
-			logger[extraStyle] = logger[extraStyle] || {};
-			//	and attach the type functions as properties
-			logger[extraStyle][type] = function(){
+  builder._curStyle = objectAssign({}, defaults.style);
+  builder._curStyles = [];
 
-				// each time, they just turn a flag on, and call the classic print
-				print[extraStyle] = true;
-				logger[type].apply(this, map(arguments));
-				return logger;
-			};
-		});
-	};
+  //  for every preset, make a property on builder
+  //  the getter is going to add that style before running builder
+  Object.defineProperties(builder, generatePresets(defaultPresets));
 
-	//	set up function modes
-	Object.keys(palette)
-	.forEach(makeFunction);
+  //  main print function
+  builder.print = () => {
 
-	return logger;
-}());
+    if(loggerInstance._prefix !== undefined){
+      loggerInstance._inputsBuffer =
+      loggerInstance._prefix
+      .concat(loggerInstance._inputsBuffer);
+    }
+
+    var finalArg = convertInputsToStrings(loggerInstance._inputsBuffer);
+
+    console.log.apply(console, finalArg);
+
+    //  reset the instance's buffer array
+    loggerInstance._inputsBuffer = [];
+  };
+
+  builder.prefix = function(){
+    loggerInstance._prefix = loggerInstance._inputsBuffer.slice();
+    loggerInstance._inputsBuffer = [];
+  };
+
+  return builder;
+};
+
+module.exports = Consologger;
