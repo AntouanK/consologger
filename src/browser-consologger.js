@@ -1,12 +1,11 @@
 
 'use strict';
 
-var objectAssign = require('object-assign');
+var objectAssign = require('object-assign'),
+    presetUtils  = require('./lib/preset');
 
 var Consologger,
     defaultPresets,
-    generatePreset,
-    generatePresets,
     addStyle,
     stringify,
     styleToString,
@@ -22,42 +21,6 @@ addStyle = function(style) {
   this._curStyles.push(style);
 };
 
-//  generate the presets getter functions
-//  returns an object of them
-generatePresets = (presets) => {
-
-  var obj = {};
-
-  presets
-  .forEach(function(preset){
-
-    obj[preset.name] = {
-      //  the getter will append the style to the current ones when chaining
-      get: function(){
-
-        addStyle.call(this, preset.style);
-        return this;
-      }
-    };
-  });
-
-  return obj;
-};
-
-generatePreset = (preset) => {
-  var obj = {};
-
-  obj[preset.name] = {
-    //  the getter will append the style to the current ones when chaining
-    get: function(){
-
-      addStyle.call(this, preset.style);
-      return this;
-    }
-  };
-
-  return obj;
-};
 
 //  adds a given preset to the `presets` array
 addPreset = function(preset){
@@ -78,7 +41,7 @@ addPreset = function(preset){
 
   var builder = this;
 
-  Object.defineProperties(builder, generatePreset(preset));
+  Object.defineProperties(builder, presetUtils.generatePreset(preset, addStyle));
 };
 
 //  returns one string that represents the arguments joined with a space
@@ -173,7 +136,7 @@ Consologger = function(defaults){
 
   //  for every preset, make a property on builder
   //  the getter is going to add that style before running builder
-  Object.defineProperties(builder, generatePresets(defaultPresets));
+  Object.defineProperties(builder, presetUtils.generatePresets(defaultPresets, addStyle));
 
   //  main print function
   builder.print = () => {
