@@ -1,24 +1,19 @@
 
 'use strict';
 
-var objectAssign = require('object-assign'),
-    presetUtils  = require('./lib/preset');
+var objectAssign  = require('object-assign'),
+    presetUtils   = require('./lib/preset'),
+    libCommon     = require('./lib/common');
 
 var Consologger,
     defaultPresets,
     mergeStyles,
-    addStyle,
-    stringify,
     convertInputsToStrings;
 
 //--------------------------------------------------------------------------
 
 defaultPresets = require('./node-presets.json');
 
-addStyle = function(style) {
-
-  this._curStyles.push(style);
-};
 
 mergeStyles = (styles) => {
 
@@ -31,12 +26,6 @@ mergeStyles = (styles) => {
   .push(styles.map((style) => { return style[1]; }).join(''));
 
   return mergedStyle;
-};
-
-
-//  returns one string that represents the arguments joined with a space
-stringify = function() {
-  return Array.prototype.join.call(arguments, ' ');
 };
 
 
@@ -77,7 +66,7 @@ Consologger = function(defaults){
   var builder = function(){
 
     //  make the arguments one string
-    var args = stringify.apply(null, arguments);
+    var args = libCommon.stringify.apply(null, arguments);
 
     builder._curStyle = mergeStyles(builder._curStyles);
 
@@ -100,7 +89,13 @@ Consologger = function(defaults){
 
   //  for every preset, make a property on builder
   //  the getter is going to add that style before running builder
-  Object.defineProperties(builder, presetUtils.generatePresets(defaultPresets, addStyle));
+  Object.defineProperties(
+    builder,
+    presetUtils.generatePresets(
+      defaultPresets,
+      libCommon.addStyle
+    )
+  );
 
   //  main print function
   builder.print = () => {
