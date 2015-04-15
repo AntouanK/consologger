@@ -1,4 +1,5 @@
-"use strict";
+
+'use strict';
 
 var common = {};
 
@@ -8,7 +9,7 @@ common.addStyle = function (style) {
 
 //  returns one string that represents the arguments joined with a space
 common.stringify = function () {
-  return Array.prototype.join.call(arguments, " ");
+  return Array.prototype.join.call(arguments, ' ');
 };
 
 module.exports = common;

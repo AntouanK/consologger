@@ -1,14 +1,15 @@
-"use strict";
 
-var objectAssign = require("object-assign"),
-    presetUtils = require("./lib/preset"),
-    libCommon = require("./lib/common");
+'use strict';
+
+var objectAssign = require('object-assign'),
+    presetUtils = require('./lib/preset'),
+    libCommon = require('./lib/common');
 
 var Consologger, defaultPresets, mergeStyles, convertInputsToStrings;
 
 //--------------------------------------------------------------------------
 
-defaultPresets = require("./node-presets.json");
+defaultPresets = require('./node-presets.json');
 
 mergeStyles = function (styles) {
 
@@ -16,11 +17,11 @@ mergeStyles = function (styles) {
 
   mergedStyle.push(styles.map(function (style) {
     return style[0];
-  }).join(""));
+  }).join(''));
 
   mergedStyle.push(styles.map(function (style) {
     return style[1];
-  }).join(""));
+  }).join(''));
 
   return mergedStyle;
 };
@@ -43,7 +44,7 @@ convertInputsToStrings = function (inputs) {
 Consologger = function (defaults) {
 
   //  if a default style is not given, make an empty one
-  if (!defaults || defaults.style === null || typeof defaults.style !== "object") {
+  if (!defaults || defaults.style === null || typeof defaults.style !== 'object') {
     defaults = { style: {} };
   }
 
@@ -54,15 +55,15 @@ Consologger = function (defaults) {
   //  the main builder function
   //  that's what we return, and all the presets are properties of this
   var builder = (function (_builder) {
-    var _builderWrapper = function builder() {
+    function builder() {
       return _builder.apply(this, arguments);
-    };
+    }
 
-    _builderWrapper.toString = function () {
+    builder.toString = function () {
       return _builder.toString();
     };
 
-    return _builderWrapper;
+    return builder;
   })(function () {
 
     //  make the arguments one string

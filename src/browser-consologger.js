@@ -31,6 +31,10 @@ addPreset = function(preset){
     throw new Error('the preset given does not have a valid style property');
   }
 
+  if(Object.getOwnPropertyNames(this).indexOf(preset.name) !== -1){
+    throw new Error('the preset name already exists');
+  }
+
   defaultPresets.push(preset);
 
   var builder = this;
@@ -101,6 +105,19 @@ Consologger = function(defaults){
   //  the main builder function
   //  that's what we return, and all the presets are properties of this
   var builder = function(){
+
+    //  override for raw objects
+    if(builder._curStyles.indexOf('obj') !== -1){
+
+      loggerInstance
+      ._inputsBuffer
+      .push({
+        arg: '%O',
+        style: arguments[0]
+      });
+      return builder;
+      //---------------------> EXIT
+    }
 
     //  make the arguments one string
     var args = libCommon.stringify.apply(null, arguments);

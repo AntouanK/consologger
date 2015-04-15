@@ -1,28 +1,33 @@
-"use strict";
 
-var objectAssign = require("object-assign"),
-    presetUtils = require("./lib/preset"),
-    libCommon = require("./lib/common");
+'use strict';
+
+var objectAssign = require('object-assign'),
+    presetUtils = require('./lib/preset'),
+    libCommon = require('./lib/common');
 
 var Consologger, defaultPresets, styleToString, addPreset, convertInputsToStrings;
 
 //--------------------------------------------------------------------------
 
-defaultPresets = require("./presets.json");
+defaultPresets = require('./presets.json');
 
 //  adds a given preset to the `presets` array
 addPreset = function (preset) {
 
-  if (preset === null || typeof preset !== "object") {
-    throw new Error(".addPreset takes an object as argument");
+  if (preset === null || typeof preset !== 'object') {
+    throw new Error('.addPreset takes an object as argument');
   }
 
-  if (typeof preset.name !== "string" || preset.name === "") {
-    throw new Error("the preset given does not have a valid name property");
+  if (typeof preset.name !== 'string' || preset.name === '') {
+    throw new Error('the preset given does not have a valid name property');
   }
 
-  if (preset.style === null || typeof preset.style !== "object") {
-    throw new Error("the preset given does not have a valid style property");
+  if (preset.style === null || typeof preset.style !== 'object') {
+    throw new Error('the preset given does not have a valid style property');
+  }
+
+  if (Object.getOwnPropertyNames(this).indexOf(preset.name) !== -1) {
+    throw new Error('the preset name already exists');
   }
 
   defaultPresets.push(preset);
@@ -36,10 +41,10 @@ addPreset = function (preset) {
 styleToString = function (obj) {
 
   var keyValues = Object.keys(obj).map(function (key) {
-    return key + ": " + obj[key];
-  }).join(";");
+    return key + ': ' + obj[key];
+  }).join(';');
 
-  return keyValues + ";";
+  return keyValues + ';';
 };
 
 //  given some input objects ( they have `arg` and `style` ),
@@ -50,8 +55,8 @@ convertInputsToStrings = function (inputs) {
       argString;
 
   argString = inputs.map(function (input) {
-    return "%c" + input.arg;
-  }).join("");
+    return '%c' + input.arg;
+  }).join('');
 
   styles = inputs.map(function (input) {
     return styleToString(input.style);
@@ -65,7 +70,7 @@ convertInputsToStrings = function (inputs) {
 Consologger = function (defaults) {
 
   //  if a default style is not given, make an empty one
-  if (!defaults || defaults.style === null || typeof defaults.style !== "object") {
+  if (!defaults || defaults.style === null || typeof defaults.style !== 'object') {
     defaults = { style: {} };
   }
 
@@ -76,16 +81,27 @@ Consologger = function (defaults) {
   //  the main builder function
   //  that's what we return, and all the presets are properties of this
   var builder = (function (_builder) {
-    var _builderWrapper = function builder() {
+    function builder() {
       return _builder.apply(this, arguments);
-    };
+    }
 
-    _builderWrapper.toString = function () {
+    builder.toString = function () {
       return _builder.toString();
     };
 
-    return _builderWrapper;
+    return builder;
   })(function () {
+
+    //  override for raw objects
+    if (builder._curStyles.indexOf('obj') !== -1) {
+
+      loggerInstance._inputsBuffer.push({
+        arg: '%O',
+        style: arguments[0]
+      });
+      return builder;
+      //---------------------> EXIT
+    }
 
     //  make the arguments one string
     var args = libCommon.stringify.apply(null, arguments);

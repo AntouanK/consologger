@@ -4,6 +4,9 @@
     "style": {}
   },
   {
+    "name": "obj"
+  },
+  {
     "name": "yellow",
     "style": {
       "color": "#FDC641"

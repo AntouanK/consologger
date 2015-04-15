@@ -1,7 +1,7 @@
 {
   "name": "consologger",
   "description": "A simple logger so you can manage all your 'console.log()' from a main lib. Feel free to make requests, report bugs, and suggest ideas.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Antonis Karamitros",
   "homepage": "https://github.com/antouank/consologger",
   "bugs": "https://github.com/antouank/consologger/issues",
@@ -9,7 +9,8 @@
     "console",
     "log",
     "logger",
-    "colors"
+    "colors",
+    "chalk"
   ],
   "repository": {
     "type": "git",
@@ -27,6 +28,6 @@
     "object-assign": "^2.0.0"
   },
   "devDependencies": {
-    "babel": "^4"
+    "babel": "^5"
   }
 }
