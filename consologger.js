@@ -1,7 +1,7 @@
 /*
-	consologger v1.0.0
+	consologger v1.1.0
 
-	Antonis Karamitros - 08 Feb 2014
+	Antonis Karamitros - 28 Oct 2015
 	@antouank
  */
 //********************************************//

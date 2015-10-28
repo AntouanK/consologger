@@ -3,24 +3,15 @@
 
 var objectAssign = require('object-assign');
 
-var Consologger,
-    defaultPresets,
-    generatePresets,
-    mergeStyles,
-    addStyle,
-    stringify,
-    convertInputsToStrings;
-
 //--------------------------------------------------------------------------
 
-defaultPresets = require('./node-presets.json');
+var defaultPresets = require('./node-presets.json');
 
-addStyle = function(style) {
-
+var addStyle = function(style) {
   this._curStyles.push(style);
 };
 
-mergeStyles = (styles) => {
+var mergeStyles = (styles) => {
 
   var mergedStyle = [];
 
@@ -35,7 +26,7 @@ mergeStyles = (styles) => {
 
 //  generate the presets getter functions
 //  returns an object of them
-generatePresets = (presets) => {
+var generatePresets = (presets) => {
 
   var obj = {};
 
@@ -45,7 +36,6 @@ generatePresets = (presets) => {
     obj[preset.name] = {
       //  the getter will append the style to the current ones when chaining
       get: function(){
-
         addStyle.call(this, preset.style);
         return this;
       }
@@ -56,29 +46,29 @@ generatePresets = (presets) => {
 };
 
 //  returns one string that represents the arguments joined with a space
-stringify = function() {
+var stringify = function() {
   return Array.prototype.join.call(arguments, ' ');
 };
 
 
 //  given some input objects ( they have `arg` and `style` ),
 //  we get back an array of strings that works for `console.log`
-convertInputsToStrings = (inputs) => {
+var convertInputsToStrings = (inputs) => {
 
   var argStrings;
 
   argStrings =
-    inputs
-    .map(function(input){
-      return input.style[0] + input.arg + input.style[1];
-    });
+  inputs
+  .map(function(input){
+    return input.style[0] + input.arg + input.style[1];
+  });
 
   return argStrings;
 };
 
 //  -------------------------------------------------------------------------
 //  Consologger contructor
-Consologger = function(defaults){
+var Consologger = function(defaults){
 
   //  if a default style is not given, make an empty one
   if(
@@ -89,13 +79,14 @@ Consologger = function(defaults){
     defaults = { style: {} };
   }
 
-  var loggerInstance = this;
+  let loggerInstance = this;
 
   loggerInstance._inputsBuffer = [];
+  loggerInstance._isActive = true;
 
   //  the main builder function
   //  that's what we return, and all the presets are properties of this
-  var builder = function(){
+  let builder = function(){
 
     //  make the arguments one string
     var args = stringify.apply(null, arguments);
@@ -134,7 +125,10 @@ Consologger = function(defaults){
 
     var finalArg = convertInputsToStrings(loggerInstance._inputsBuffer);
 
-    console.log.apply(console, finalArg);
+    //  print only if the logger is active
+    if(loggerInstance._isActive === true){
+      console.log.apply(console, finalArg);
+    }
 
     //  reset the instance's buffer array
     loggerInstance._inputsBuffer = [];
@@ -145,7 +139,18 @@ Consologger = function(defaults){
     loggerInstance._inputsBuffer = [];
   };
 
+  //  a function to turn print function off
+  builder.switchOff = () => {
+    loggerInstance._isActive = false;
+  };
+  //  a function to turn print function off
+  builder.switchOn = () => {
+    loggerInstance._isActive = true;
+  };
+
   return builder;
 };
+
+
 
 module.exports = Consologger;

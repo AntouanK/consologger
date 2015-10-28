@@ -1,15 +1,15 @@
-"use strict";
 
-var objectAssign = require("object-assign");
+'use strict';
+
+var objectAssign = require('object-assign');
 
 var Consologger, defaultPresets, generatePreset, generatePresets, addStyle, stringify, styleToString, addPreset, convertInputsToStrings;
 
 //--------------------------------------------------------------------------
 
-defaultPresets = require("./presets.json");
+defaultPresets = require('./presets.json');
 
 addStyle = function (style) {
-
   this._curStyles.push(style);
 };
 
@@ -24,7 +24,6 @@ generatePresets = function (presets) {
     obj[preset.name] = {
       //  the getter will append the style to the current ones when chaining
       get: function get() {
-
         addStyle.call(this, preset.style);
         return this;
       }
@@ -52,16 +51,16 @@ generatePreset = function (preset) {
 //  adds a given preset to the `presets` array
 addPreset = function (preset) {
 
-  if (preset === null || typeof preset !== "object") {
-    throw new Error(".addPreset takes an object as argument");
+  if (preset === null || typeof preset !== 'object') {
+    throw new Error('.addPreset takes an object as argument');
   }
 
-  if (typeof preset.name !== "string" || preset.name === "") {
-    throw new Error("the preset given does not have a valid name property");
+  if (typeof preset.name !== 'string' || preset.name === '') {
+    throw new Error('the preset given does not have a valid name property');
   }
 
-  if (preset.style === null || typeof preset.style !== "object") {
-    throw new Error("the preset given does not have a valid style property");
+  if (preset.style === null || typeof preset.style !== 'object') {
+    throw new Error('the preset given does not have a valid style property');
   }
 
   defaultPresets.push(preset);
@@ -73,17 +72,17 @@ addPreset = function (preset) {
 
 //  returns one string that represents the arguments joined with a space
 stringify = function () {
-  return Array.prototype.join.call(arguments, " ");
+  return Array.prototype.join.call(arguments, ' ');
 };
 
 //  converts a style object to a string just like the console.log expects
 styleToString = function (obj) {
 
   var keyValues = Object.keys(obj).map(function (key) {
-    return key + ": " + obj[key];
-  }).join(";");
+    return key + ': ' + obj[key];
+  }).join(';');
 
-  return keyValues + ";";
+  return keyValues + ';';
 };
 
 //  given some input objects ( they have `arg` and `style` ),
@@ -94,8 +93,8 @@ convertInputsToStrings = function (inputs) {
       argString;
 
   argString = inputs.map(function (input) {
-    return "%c" + input.arg;
-  }).join("");
+    return '%c' + input.arg;
+  }).join('');
 
   styles = inputs.map(function (input) {
     return styleToString(input.style);
@@ -109,27 +108,18 @@ convertInputsToStrings = function (inputs) {
 Consologger = function (defaults) {
 
   //  if a default style is not given, make an empty one
-  if (!defaults || defaults.style === null || typeof defaults.style !== "object") {
+  if (!defaults || defaults.style === null || typeof defaults.style !== 'object') {
     defaults = { style: {} };
   }
 
   var loggerInstance = this;
 
   loggerInstance._inputsBuffer = [];
+  loggerInstance._isActive = true;
 
   //  the main builder function
   //  that's what we return, and all the presets are properties of this
-  var builder = (function (_builder) {
-    var _builderWrapper = function builder() {
-      return _builder.apply(this, arguments);
-    };
-
-    _builderWrapper.toString = function () {
-      return _builder.toString();
-    };
-
-    return _builderWrapper;
-  })(function () {
+  var builder = function builder() {
 
     //  make the arguments one string
     var args = stringify.apply(null, arguments);
@@ -149,7 +139,7 @@ Consologger = function (defaults) {
     builder._curStyles = [];
 
     return builder;
-  });
+  };
 
   builder._curStyle = objectAssign({}, defaults.style);
   builder._curStyles = [];
@@ -167,7 +157,10 @@ Consologger = function (defaults) {
 
     var finalArg = convertInputsToStrings(loggerInstance._inputsBuffer);
 
-    console.log.apply(console, finalArg);
+    //  print only if the logger is active
+    if (loggerInstance._isActive === true) {
+      console.log.apply(console, finalArg);
+    }
 
     //  reset the instance's buffer array
     loggerInstance._inputsBuffer = [];
@@ -176,6 +169,15 @@ Consologger = function (defaults) {
   builder.prefix = function () {
     loggerInstance._prefix = loggerInstance._inputsBuffer.slice();
     loggerInstance._inputsBuffer = [];
+  };
+
+  //  a function to turn print function off
+  builder.switchOff = function () {
+    loggerInstance._isActive = false;
+  };
+  //  a function to turn print function off
+  builder.switchOn = function () {
+    loggerInstance._isActive = true;
   };
 
   builder.addPreset = addPreset.bind(builder);

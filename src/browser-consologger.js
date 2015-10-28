@@ -18,7 +18,6 @@ var Consologger,
 defaultPresets = require('./presets.json');
 
 addStyle = function(style) {
-
   this._curStyles.push(style);
 };
 
@@ -34,7 +33,6 @@ generatePresets = (presets) => {
     obj[preset.name] = {
       //  the getter will append the style to the current ones when chaining
       get: function(){
-
         addStyle.call(this, preset.style);
         return this;
       }
@@ -138,6 +136,7 @@ Consologger = function(defaults){
   var loggerInstance = this;
 
   loggerInstance._inputsBuffer = [];
+  loggerInstance._isActive = true;
 
   //  the main builder function
   //  that's what we return, and all the presets are properties of this
@@ -152,7 +151,6 @@ Consologger = function(defaults){
     .forEach(function(thisStyle){
       objectAssign(builder._curStyle, thisStyle);
     });
-
 
     loggerInstance
     ._inputsBuffer
@@ -186,7 +184,10 @@ Consologger = function(defaults){
 
     var finalArg = convertInputsToStrings(loggerInstance._inputsBuffer);
 
-    console.log.apply(console, finalArg);
+    //  print only if the logger is active
+    if(loggerInstance._isActive === true){
+      console.log.apply(console, finalArg);
+    }
 
     //  reset the instance's buffer array
     loggerInstance._inputsBuffer = [];
@@ -195,6 +196,15 @@ Consologger = function(defaults){
   builder.prefix = function(){
     loggerInstance._prefix = loggerInstance._inputsBuffer.slice();
     loggerInstance._inputsBuffer = [];
+  };
+
+  //  a function to turn print function off
+  builder.switchOff = () => {
+    loggerInstance._isActive = false;
+  };
+  //  a function to turn print function off
+  builder.switchOn = () => {
+    loggerInstance._isActive = true;
   };
 
   builder.addPreset = addPreset.bind(builder);

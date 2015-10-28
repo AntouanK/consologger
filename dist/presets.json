@@ -77,13 +77,31 @@
     }
   },
   {
+    "name": "bold",
+    "style": {
+      "font-weight": "bold"
+    }
+  },
+  {
     "name": "i",
     "style": {
       "font-style": "italic"
     }
   },
   {
+    "name": "italic",
+    "style": {
+      "font-style": "italic"
+    }
+  },
+  {
     "name": "u",
+    "style": {
+      "text-decoration": "underline"
+    }
+  },
+  {
+    "name": "underline",
     "style": {
       "text-decoration": "underline"
     }

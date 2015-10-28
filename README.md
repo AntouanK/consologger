@@ -158,3 +158,9 @@ takes the line buffer and saves is as a prefix so that every next `.print()` wil
 Adds a new preset.
 `presetObject` must have a 'name' field with a string value, and a 'style' field that's an object and has the CSS values you want to apply.
 ( for now, you cannot override presets that already exist )
+
+### .switchOff()
+Will make the `print` function do nothing. Effectively turning off printing.
+
+### .switchOn()
+Will make the `print` function print again, reverting any previous `switchOff` call.
